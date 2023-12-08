@@ -34,7 +34,7 @@ public class CamCap extends javax.swing.JFrame {
 
     CascadeClassifier faceDetector;  // Objeto reconocedor de imagenes
     CascadeClassifier eyeDetector;   // Objeto para reconocer ojos
-    CascadeClassifier noseDetector;   // Objeto para reconocer nariz
+    CascadeClassifier noseDetector;   // Objeto para reconocer narices
     
     MatOfRect faceDetections;   // Matriz donde se alojarán las caras detectadas
     MatOfRect eyeDetections;   // Matriz donde se alojarán los ojos detectadas
