@@ -34,15 +34,18 @@ public class CamCap extends javax.swing.JFrame {
 
     CascadeClassifier faceDetector;  // Objeto reconocedor de imagenes
     CascadeClassifier eyeDetector;   // Objeto para reconocer ojos
-
+    CascadeClassifier noseDetector;   // Objeto para reconocer nariz
+    
     MatOfRect faceDetections;   // Matriz donde se alojarán las caras detectadas
     MatOfRect eyeDetections;   // Matriz donde se alojarán los ojos detectadas
-
+    MatOfRect noseDetections;   // Matriz donde se alojarán las narices detectadas
+    
     String File_path = "";
     String base_path = "./data/haarcascades/";   // Carpeta donde se localizan los modelos de reconocimiento
     String faceFile = "haarcascade_frontalface_alt.xml";  // Archivo referencia para reconocimiento de rostros
     String eyeFile = "haarcascade_eye.xml";  // Archivo referencia para reconocimiento de rostros
-
+    String noseFile = "haarcascade_mcs_nose.xml";
+    
     class DaemonThread implements Runnable {
 
         protected volatile boolean runnable = false;
@@ -68,7 +71,10 @@ public class CamCap extends javax.swing.JFrame {
 
             eyeDetector = new CascadeClassifier(base_path + eyeFile); // Se crea un objeto CascadeClassifier que reconocera caras
             eyeDetections = new MatOfRect(); // Se inicializa el objeto donde se guardaran las caras detectadas
-
+            
+            noseDetector = new CascadeClassifier(base_path + noseFile);
+            noseDetections = new MatOfRect();
+            
             synchronized (this) {
                 while (runnable) {
                     if (webSource.grab()) {
@@ -88,7 +94,7 @@ public class CamCap extends javax.swing.JFrame {
                                
                                 cara = frame.submat(faceDetections.toArray()[i]);
                                 
-                                
+                                noseDetector.detectMultiScale(cara, noseDetections);
                                 eyeDetector.detectMultiScale(cara, eyeDetections);
 
                                 if (eyeDetections.toArray().length != 0) {
@@ -106,7 +112,20 @@ public class CamCap extends javax.swing.JFrame {
 
                                     }
                                 }
+                                if (noseDetections.toArray().length != 0) {
 
+                                    System.out.println("Cara con " + noseDetections.toArray().length + " nariz");
+
+                                    for (int j = 0; j < noseDetections.toArray().length; j++) {
+                                        
+                                        Rect rect2 = noseDetections.toArray()[j];
+
+                                        Imgproc.rectangle(frame, new Point(rect2.x, rect2.y), new Point(rect2.x + rect2.width, rect2.y + rect2.height),
+                                        new Scalar(0, 255, 0));
+                                        
+                                        Mat eye = cara.submat(noseDetections.toArray()[j]);
+                                    }
+                            }
                             }
 
                             // Se codifica la imagen frame a un arreglo de memoria
